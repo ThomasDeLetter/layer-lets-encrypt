@@ -165,11 +165,10 @@ def start_web_service():
 
 
 def configure_periodic_renew():
+    charms_reactive = check_output(['which', 'charms.reactive'], universal_newlines=True, stderr=STDOUT).strip()
     command = (
-        'export CHARM_DIR="{}"; '
-        '/usr/local/bin/charms.reactive '
-        'set_state lets-encrypt.renew.requested '
-        ''.format(os.environ['CHARM_DIR']))
+        'export CHARM_DIR="{}"; {} set_flag lets-encrypt.renew.requested '
+        ''.format(os.environ['CHARM_DIR'], charms_reactive))
     cron = CronTab(user='root')
     jobRenew = cron.new(
         command=command,
